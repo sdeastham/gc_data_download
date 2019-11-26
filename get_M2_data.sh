@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ $# -eq 0 ]]; then
+   $0 -h
+   exit 1
+fi
+
 # Server version of curl is a bit old...
 #curldir='/n/home13/seastham/curl'
 curlbin=curl
@@ -45,7 +50,12 @@ while getopts 'o:y:m:cxhb:' OPTION; do
       echo " -o dir           Download to target directory [./MERRA2]"
       echo " -b /path/to/curl Use alternative curl binary at /path/to/curl [curl]"
       echo " -h               Show this help message"
-      exit 0
+      if [[ "$OPTION" == "h" ]]; then
+         exit 0
+      else
+         # Bad argument
+         exit 1
+      fi
       ;;
   esac
 done
