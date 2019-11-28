@@ -31,5 +31,9 @@ cd $out_dir
 for iPath in "$@"
 do
 	echo "Retrieving $iPath..."
-	wget -r -nH -N --cut-dirs=4 "ftp://ftp.as.harvard.edu/gcgrid/geos-chem/data/ExtData/$iPath/*"
+        # Old code - obsolete as of 2019-11-26
+	#wget -r -nH -N --cut-dirs=4 "ftp://ftp.as.harvard.edu/gcgrid/geos-chem/data/ExtData/$iPath/*"
+        # THIS WORKS! Need BOTH trailing slash and "--no-parent" to prevent it from ascending
+        # Also need "-e robots=off" to prevent it from downloading robots.txt
+	wget -r --no-parent -nH -N --cut-dirs=1 -e robots=off -R "*.html,*.gif,index.html*" "http://geoschemdata.computecanada.ca/ExtData/$iPath/"
 done
