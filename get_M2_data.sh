@@ -20,10 +20,14 @@ targ_yr=NONE
 out_dir=MERRA2
 get_cn=false
 cn_only=false
-while getopts 'o:y:m:cxhb:' OPTION; do
+use_wget=false
+while getopts 'o:y:m:cxhbw:' OPTION; do
   case "$OPTION" in
     b)
       curlbin=$OPTARG
+      ;;
+    w)
+      use_wget=true
       ;;
     y)
       targ_yr="$OPTARG"
@@ -50,6 +54,7 @@ while getopts 'o:y:m:cxhb:' OPTION; do
       echo " -o dir           Download to target directory [./MERRA2]"
       echo " -b /path/to/curl Use alternative curl binary at /path/to/curl [curl]"
       echo " -h               Show this help message"
+      echo " -w               Use wget instead of curl"
       if [[ "$OPTION" == "h" ]]; then
          exit 0
       else
@@ -68,7 +73,11 @@ fi
 
 # To get constant data regardless of year being downloaded, call this script with the -x option
 if [[ "$get_cn" == "true" ]]; then
-   ./$0 -x -o "$out_dir" -b "$curlbin"
+   if [[ "$use_wget" == "true" ]]; then
+      ./$0 -x -o "$out_dir" -w
+   else
+      ./$0 -x -o "$out_dir" -b "$curlbin"
+   fi
 fi
 
 if [[ "$cn_only" == "true" ]]; then
@@ -164,7 +173,11 @@ do
           targFile="MERRA2.${iYear}${xMo}${xDay}.${iFile}.05x0625.nc4"
           targFileFull="$baseDir/GEOS_0.5x0.625/MERRA2/$iYear/$xMo/$targFile"
           #echo $targFileFull
-          $curlbin --retry 50 -L -C - -O "$targFileFull"
+          if [[ "$use_wget" == "true" ]]; then
+             wget -nH -c -nd "$targFileFull"
+          else
+             $curlbin --retry 50 -L -C - -O "$targFileFull"
+          fi
           #echo $?
        done
     done
