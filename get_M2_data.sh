@@ -21,7 +21,7 @@ out_dir=MERRA2
 get_cn=false
 cn_only=false
 use_wget=false
-while getopts 'o:y:m:cxhbw:' OPTION; do
+while getopts 'o:y:m:cxhb:w' OPTION; do
   case "$OPTION" in
     b)
       curlbin=$OPTARG
